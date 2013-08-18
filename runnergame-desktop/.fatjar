@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Thu Aug 15 03:00:59 EDT 2013
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=false
+onejar.checkbox=false
+jarname=runnergame-desktop_fat.jar
+manifest.mergeall=true
+manifest.mainclass=com.newrog.runnergame.Main
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=
