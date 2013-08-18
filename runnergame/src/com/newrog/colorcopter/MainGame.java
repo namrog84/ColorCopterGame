@@ -17,7 +17,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -73,7 +72,7 @@ public class MainGame implements Screen {
 	//private float offset2 = 800;
 
 	
-	private float extra = 0;
+	//private float extra = 0;
 	
 	
 	ParticleEffect partEffects = new ParticleEffect();
@@ -150,7 +149,7 @@ public class MainGame implements Screen {
 
 	int hitCounter = 0;
 	
-
+/*
 	private void generateLevel(int off) {
 		double factor = 10;
 		for(int i = 0; i < chunkWidth; i++){
@@ -177,6 +176,7 @@ public class MainGame implements Screen {
 			}
 		}
 	}
+	*/
 	
 	public void logic(float delta) {
 		
@@ -207,9 +207,7 @@ public class MainGame implements Screen {
 								}
 							}
 						}
-
 					}
-				
 					for(Entity e: coins){
 						if (e.type == 5) {
 							Coin co = (Coin)e;
@@ -222,30 +220,21 @@ public class MainGame implements Screen {
 								score++;
 								l.setText(""+score);
 								
-								//co.visible = false;
-								
-								//world.destroyBody(co.groundBody);
 							}
-							
 						}
 					}
-					
 			}
-
 		}
-		partEffects.update(delta);
 		
-
+		partEffects.update(delta);
 
 		for(Coin rc: removingCoins){
 			world.destroyBody(rc.groundBody);
 		}
 		coins.removeAll(removingCoins, true);
 		
-		
 		if (ticks % 60 == 0) {
-			System.out.println(Gdx.graphics.getFramesPerSecond());
-			System.out.println("World: " + world.getBodyCount());
+			System.out.println("FPS: " + Gdx.graphics.getFramesPerSecond() + "\tWorldObjects: " + world.getBodyCount());
 		}
 		ticks++;
 		
@@ -259,7 +248,6 @@ public class MainGame implements Screen {
 		partEffects.draw(batch);
 	}
 	
-
 	//private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 	
 	@Override
@@ -305,22 +293,19 @@ public class MainGame implements Screen {
 			}
 		}*/
 		
-		
 		batch.end();
 		
 		// Matrix4 debugCam = camera.combined.cpy();
 		// debugRenderer.render(world, debugCam.scl(BOX_TO_WORLD));
-		
+
 		stage.act();
 		stage.draw();
-		
-		//if(!gameFinished)
-			world.step(1 / 60f, 6, 2);
 
+		world.step(1 / 60f, 6, 2);
 	}
+
 	
-
-
+	
 	private void buildLevel(Entity[][] bb, int sX, int sY) {
 
 		fillBlocks(bb, 0);

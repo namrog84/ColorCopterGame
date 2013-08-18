@@ -1,7 +1,6 @@
 package com.newrog.colorcopter;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.loaders.SoundLoader;
 import com.badlogic.gdx.audio.Sound;
 
 public class MyAudio {

@@ -36,7 +36,7 @@ public class SimplexNoise {
          * Gradient vectors for 4D (pointing to mid points of all edges of a unit 4D
          * hypercube)
          */
-        private static final int[][] grad4 = { { 0, 1, 1, 1 }, { 0, 1, 1, -1 },
+     /*   private static final int[][] grad4 = { { 0, 1, 1, 1 }, { 0, 1, 1, -1 },
                         { 0, 1, -1, 1 }, { 0, 1, -1, -1 }, { 0, -1, 1, 1 },
                         { 0, -1, 1, -1 }, { 0, -1, -1, 1 }, { 0, -1, -1, -1 },
                         { 1, 0, 1, 1 }, { 1, 0, 1, -1 }, { 1, 0, -1, 1 }, { 1, 0, -1, -1 },
@@ -47,7 +47,7 @@ public class SimplexNoise {
                         { 1, 1, 1, 0 }, { 1, 1, -1, 0 }, { 1, -1, 1, 0 }, { 1, -1, -1, 0 },
                         { -1, 1, 1, 0 }, { -1, 1, -1, 0 }, { -1, -1, 1, 0 },
                         { -1, -1, -1, 0 } };
-
+      */
         /**
          * Permutation table
          */
