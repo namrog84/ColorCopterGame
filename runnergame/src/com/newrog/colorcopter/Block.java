@@ -1,5 +1,6 @@
 package com.newrog.colorcopter;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -65,7 +66,10 @@ public class Block extends Entity {
 	}
 
 	public void render(SpriteBatch batch) {
-		sprite.draw(batch);
+		batch.draw(sprite, sprite.getX(), sprite.getY(), sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
+		//sprite.draw(batch);
+
+		
 	}
 
 	public void dispose() {

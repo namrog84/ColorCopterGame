@@ -10,7 +10,7 @@ public abstract class Entity {
 	public int type = 0;
 	protected float width;
 	protected float height;
-	protected float rotation;
+	protected float rotation; 
 
 	public Entity() {
 		position = new Vector2(0,0);

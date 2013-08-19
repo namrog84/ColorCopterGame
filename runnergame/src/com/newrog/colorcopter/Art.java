@@ -19,6 +19,7 @@ public class Art {
 	
 	
 	public static Texture pBackground;
+	public static Texture blackBackground;
 	public static Texture pBackground2;
 	public static Texture heliTexture;
 	public static Animation heliAnimation;
@@ -28,17 +29,19 @@ public class Art {
 	public static void loadArt(){
 		heliTexture = new Texture(Gdx.files.internal("data/helicopter3.png"));
 		heliTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
 		
-		
-		
+	
 		texture = new Texture(Gdx.files.internal("data/block4_2.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		pBackground = new Texture(Gdx.files.internal("data/blockbackground.png"));
 		pBackground.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		pBackground2 = new Texture(Gdx.files.internal("data/blockbackground25.png"));
+		pBackground2 = new Texture(Gdx.files.internal("data/blockbackground_2.png"));
 		pBackground2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		
+		blackBackground = new Texture(Gdx.files.internal("data/blackBG.png"));
+		blackBackground.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		
 		startTexture = new Texture(Gdx.files.internal("data/block1.png"));

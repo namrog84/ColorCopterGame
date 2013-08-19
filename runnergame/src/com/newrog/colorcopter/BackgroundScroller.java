@@ -1,5 +1,6 @@
 package com.newrog.colorcopter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class BackgroundScroller {
@@ -51,7 +52,9 @@ public class BackgroundScroller {
 
 
 	public void render(SpriteBatch batch) {
-
+		batch.draw(Art.blackBackground, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		
+		
 		drawBackground(batch, blockBG2, chunkCount1);
 		drawBackground(batch, blockBG2_swap, chunkCount2);
 		
@@ -68,8 +71,8 @@ public class BackgroundScroller {
 			
 			distanc -= offset1;
 		}
-		distanc += game.camera.position.x - distSinceLast;
-		distSinceLast = game.camera.position.x;
+		distanc += -game.tmpCam.x - distSinceLast;
+		distSinceLast = -game.tmpCam.x;
 		
 	}
 	
@@ -77,7 +80,7 @@ public class BackgroundScroller {
 		for(int i = 0; i < parallelChunkWidth; i++){
 			for(int j = 0; j < 200; j++){
 				if(bb[i][j]){
-					sb.draw(Art.pBackground2, i*16+(cc*offset1)+(game.camera.position.x)*.50f-640, j*16+game.camera.position.y/3-480, 16, 16);
+					sb.draw(Art.pBackground2, i*16+(cc*offset1)+(-game.tmpCam.x)*.50f-640, j*16+-game.tmpCam.y/3-480, 16, 16);
 				}
 			}
 		}
