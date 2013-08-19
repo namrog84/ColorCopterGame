@@ -2,6 +2,8 @@ package com.newrog.colorcopter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.newrog.colorcopter.resources.Art;
+import com.newrog.colorcopter.utils.SimplexNoise;
 
 public class BackgroundScroller {
 	
@@ -22,13 +24,14 @@ public class BackgroundScroller {
 		
 	}
 	
+	double fillRate = .3;
 
 	public void generateBackground(int off) {
 		double factor = 10;
 		for(int i = 0; i < parallelChunkWidth; i++){
 			for(int j = 0; j < 200; j++){
 				
-				if(SimplexNoise.noise((i+(parallelChunkWidth*off))/factor, (j+(200*off))/factor)>.4){
+				if(SimplexNoise.noise((i+(parallelChunkWidth*off))/factor, (j+(200*off))/factor)>fillRate){
 					blockBG2[i][j] = true;
 				}else{
 					blockBG2[i][j] = false;
@@ -41,7 +44,7 @@ public class BackgroundScroller {
 		double factor = 10;
 		for(int i = 0; i < parallelChunkWidth; i++){
 			for(int j = 0; j < 200; j++){
-				if(SimplexNoise.noise((i+(parallelChunkWidth*off))/factor, (j+(200*off))/factor)>.4){
+				if(SimplexNoise.noise((i+(parallelChunkWidth*off))/factor, (j+(200*off))/factor)>fillRate){
 					blockBG2_swap[i][j] = true;
 				}else{
 					blockBG2_swap[i][j] = false;
@@ -71,8 +74,8 @@ public class BackgroundScroller {
 			
 			distanc -= offset1;
 		}
-		distanc += -game.tmpCam.x - distSinceLast;
-		distSinceLast = -game.tmpCam.x;
+		distanc += game.tmpCam.x - distSinceLast;
+		distSinceLast = game.tmpCam.x;
 		
 	}
 	

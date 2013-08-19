@@ -1,11 +1,11 @@
-package com.newrog.colorcopter;
+package com.newrog.colorcopter.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Entity {
 
-	protected Vector2 position;
+	public Vector2 position;
 
 	public int type = 0;
 	protected float width;

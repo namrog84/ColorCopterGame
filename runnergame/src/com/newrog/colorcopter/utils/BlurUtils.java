@@ -1,4 +1,4 @@
-package com.newrog.colorcopter;
+package com.newrog.colorcopter.utils;
 
 import java.nio.ByteBuffer;
 

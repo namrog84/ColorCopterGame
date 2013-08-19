@@ -1,10 +1,12 @@
-package com.newrog.colorcopter;
+package com.newrog.colorcopter.resources;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Art {
 	
@@ -25,8 +27,15 @@ public class Art {
 	public static Animation heliAnimation;
 	public static Texture heliT;
 	
+	public static TextureAtlas buttonAtlas;
+	public static Skin buttonSkin;
 	
 	public static void loadArt(){
+		
+		buttonAtlas = new TextureAtlas("data/ui/buttons.atlas");
+		buttonSkin = new Skin(buttonAtlas);
+		
+		
 		heliTexture = new Texture(Gdx.files.internal("data/helicopter3.png"));
 		heliTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 

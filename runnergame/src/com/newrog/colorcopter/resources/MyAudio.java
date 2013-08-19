@@ -1,4 +1,4 @@
-package com.newrog.colorcopter;
+package com.newrog.colorcopter.resources;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;

@@ -1,4 +1,4 @@
-package com.newrog.colorcopter;
+package com.newrog.colorcopter.utils;
 
 /**
  * Simplex Noise in 2D, 3D and 4D. Based on the example code of this paper:

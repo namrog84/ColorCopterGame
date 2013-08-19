@@ -1,4 +1,4 @@
-package com.newrog.colorcopter;
+package com.newrog.colorcopter.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -7,6 +7,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.newrog.colorcopter.MainGame;
+import com.newrog.colorcopter.resources.Art;
 
 public class Coin extends Entity {
 

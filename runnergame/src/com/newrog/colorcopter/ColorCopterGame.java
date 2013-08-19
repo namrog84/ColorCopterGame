@@ -2,6 +2,8 @@ package com.newrog.colorcopter;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
+import com.newrog.colorcopter.resources.Art;
+import com.newrog.colorcopter.resources.MyAudio;
 
 public class ColorCopterGame extends Game{
 

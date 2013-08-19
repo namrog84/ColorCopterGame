@@ -1,27 +1,21 @@
-package com.newrog.colorcopter;
+package com.newrog.colorcopter.entities;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.newrog.colorcopter.MainGame;
+import com.newrog.colorcopter.resources.Art;
 
-public class Block extends Entity {
+public class SimpleBlock extends Entity {
 
 	//private Texture texture;
 	public Sprite sprite;
-	
-	public BodyDef groundBodyDef;
-	public Body groundBody;
+
 	MainGame game;
 	
-	public Block(float x, float y, MainGame g) {
+	public SimpleBlock(float x, float y, MainGame g) {
 		game = g;
-		type = 3;
-		//g.texture = new Texture(Gdx.files.internal("data/block4.png"));
-		//g.texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		
 
 		sprite = new Sprite(Art.texture);
 		sprite.setSize(Art.texture.getWidth(), Art.texture.getHeight());
@@ -36,26 +30,30 @@ public class Block extends Entity {
 		
 
 		// Create our body definition
-		groundBodyDef =new BodyDef();  
+		/*BodyDef groundBodyDef =new BodyDef();  
 		// Set its world position
-		groundBodyDef.position.set(new Vector2(x*MainGame.WORLD_TO_BOX, y*MainGame.WORLD_TO_BOX));  
+		groundBodyDef.position.set(new Vector2(x*EscapeGame.WORLD_TO_BOX, y*EscapeGame.WORLD_TO_BOX));  
 
 		// Create a body from the defintion and add it to the world
-		groundBody = game.world.createBody(groundBodyDef);  
+		Body groundBody = game.world.createBody(groundBodyDef);  
 
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();  
 		// (setAsBox takes half-width and half-height as arguments)
-		groundBox.setAsBox(32*MainGame.WORLD_TO_BOX/2, 32*MainGame.WORLD_TO_BOX/2);
+		groundBox.setAsBox(32*EscapeGame.WORLD_TO_BOX/2, 32*EscapeGame.WORLD_TO_BOX/2);
 		// Create a fixture from our polygon shape and add it to our ground body  
 		groundBody.createFixture(groundBox, 0.0f); 
 		// Clean up after ourselves
 		groundBox.dispose();
 		
+		*/
 		
 		
 		
-		g.blockList.add(this);
+		
+		
+		
+		
 	}
 
 	public void update(float delta) {
@@ -66,13 +64,10 @@ public class Block extends Entity {
 	}
 
 	public void render(SpriteBatch batch) {
-		batch.draw(sprite, sprite.getX(), sprite.getY(), sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
-		//sprite.draw(batch);
-
-		
+		sprite.draw(batch);
 	}
 
 	public void dispose() {
-	//	texture.dispose();
+		//texture.dispose();
 	}
 }

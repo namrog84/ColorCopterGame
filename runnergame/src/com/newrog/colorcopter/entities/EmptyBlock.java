@@ -1,4 +1,4 @@
-package com.newrog.colorcopter;
+package com.newrog.colorcopter.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
