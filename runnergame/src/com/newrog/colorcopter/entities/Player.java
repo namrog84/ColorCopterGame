@@ -52,21 +52,23 @@ public class Player extends Entity {
 
 		// Create our body in the world using our body definition
 		body = g.world.createBody(bodyDef);
-
+		body.setUserData(this);
+		
 		// Create a circle shape and set its radius to 6
 		CircleShape circle = new CircleShape();
-		circle.setRadius(.25f);
+		circle.setRadius(.20f);
 
 		// Create a fixture definition to apply our shape to
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = circle;
-		fixtureDef.density = 1.0f;
+		fixtureDef.density = 1.5625f;
 		fixtureDef.friction = 0.4f;
 		fixtureDef.restitution = 0.3f; // Make it bounce a little bit
-
+		
 		// Create our fixture and attach it to the body
 		Fixture fixture = body.createFixture(fixtureDef);
 
+		
 		// fixture.notify();
 		// Remember to dispose of any shapes after you're done with them!
 		// BodyDef and FixtureDef don't need disposing, but shapes do.
@@ -87,6 +89,9 @@ public class Player extends Entity {
 
 	public void update(float delta) {
 
+		
+		
+		
 		pWindFromProp.setPosition(position.x, position.y + 20);
 		for (int i = 0; i < pWindFromProp.getEmitters().size; i++) { // get the list of emitters - things that emit particles
 			pWindFromProp.getEmitters().get(i).getTransparency().setHigh(.15f);
@@ -173,10 +178,13 @@ public class Player extends Entity {
 			pWindFromProp.draw(batch);
 		}
 
-		// sprite.setTexture(Art.heliAnimation.getKeyFrame(stateTime, true));
-		currentFrame = Art.heliAnimation.getKeyFrame(stateTime, true);
-		batch.draw(currentFrame, position.x, position.y, 192 / 2f, 64 / 2f, 192, 64, 1, 1, (int) rotation);
-		// sprite.draw(batch);
+		
+		if(alive){
+			// sprite.setTexture(Art.heliAnimation.getKeyFrame(stateTime, true));
+			currentFrame = Art.heliAnimation.getKeyFrame(stateTime, true);
+			batch.draw(currentFrame, position.x, position.y, 192 / 2f, 64 / 2f, 192, 64, 1, 1, (int) rotation);
+			// sprite.draw(batch);
+		}
 	}
 
 	public void dispose() {

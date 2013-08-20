@@ -13,6 +13,14 @@ public class Art {
 	private Art(){}
 	
 	public static Texture texture;
+	
+	
+	public static Texture px_1Black;
+	public static Texture px_1Red;
+	public static Texture px_1White;
+	
+	
+	
 	public static Texture texture2;
 	public static Texture startTexture;
 	public static Texture coinT;
@@ -38,6 +46,10 @@ public class Art {
 		
 		heliTexture = new Texture(Gdx.files.internal("data/helicopter3.png"));
 		heliTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+		px_1Black = new Texture(Gdx.files.internal("data/1pixel_black.png"));
+		px_1Red = new Texture(Gdx.files.internal("data/1pixel_red.png"));
+		px_1White = new Texture(Gdx.files.internal("data/1pixel_white.png"));
 
 		
 	

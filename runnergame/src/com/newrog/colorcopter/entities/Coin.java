@@ -7,6 +7,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.newrog.colorcopter.Chunk;
 import com.newrog.colorcopter.MainGame;
 import com.newrog.colorcopter.resources.Art;
 
@@ -20,23 +22,26 @@ public class Coin extends Entity {
 	private BodyDef groundBodyDef;
 
 	public  Body groundBody;
-
-	public Coin(MainGame game, int x, int y) {
+	public Chunk coinChunk;
+	public Coin(Chunk c, MainGame game, int x, int y) {
 		position.x = x; 
 		position.y = y;
-		
+		coinChunk = c;
 		
 		type = 5;
 
 		// Create our body definition
 		groundBodyDef =new BodyDef();  
+		groundBodyDef.type = BodyType.DynamicBody;
+		groundBodyDef.gravityScale = 0;
 		// Set its world position
 		groundBodyDef.position.set(new Vector2(x*MainGame.WORLD_TO_BOX, y*MainGame.WORLD_TO_BOX));  
 		
 		
 		// Create a body from the defintion and add it to the world
 		groundBody = game.world.createBody(groundBodyDef);  
-
+		
+		
 		// Create a polygon shape
 		PolygonShape groundBox = new PolygonShape();  
 		// (setAsBox takes half-width and half-height as arguments)
@@ -44,12 +49,20 @@ public class Coin extends Entity {
 		
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = groundBox;
-		fixtureDef.density = 0.0f; 
+		fixtureDef.density = 0f;
+		fixtureDef.friction = 0;
+		fixtureDef.restitution = 0;
 		fixtureDef.isSensor = true;
+		
+		
+		//fixtureDef.isSensor = true;
+		
 		
 		// Create a fixture from our polygon shape and add it to our ground body  
 		groundBody.createFixture(fixtureDef);
 		
+		
+		groundBody.setUserData(this);
 		
 		// Clean up after ourselves
 		groundBox.dispose();
@@ -61,8 +74,11 @@ public class Coin extends Entity {
 	//public boolean visible = true;
 	@Override
 	public void update(float delta) {
+		
 		stateTime += delta;
 		currentFrame = Art.coinAnimation.getKeyFrame(stateTime, true);
+		position.x = 100*groundBody.getPosition().x;
+		position.y = 100*groundBody.getPosition().y;
 	}
 
 	@Override

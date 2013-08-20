@@ -67,15 +67,24 @@ public class Chunk {
 			c.render(batch);
 		}
 	}
-
+	int changeY1= 0;
+	int changeY2= 0;
+	
+	int lastY1= 0;
+	int lastY2= 0;
+	
+	
+	
 	private void buildLevel(Entity[][] bb, int sX, int sY) {
-
+		lastY1 = sY;
+		
 		fillBlocks(bb, 0);
 
 		for (int i = 0; i < chunkWidth - sX; i++) {
 			if (r.nextInt(100) <= roughness) {
 				int ro = r.nextInt(4);
-				currentWidth += roll[ro];
+				changeY2 = roll[ro];
+				currentWidth += changeY2;
 
 				if (currentWidth < 15 - chunkDiff)
 					currentWidth = 15 - chunkDiff;
@@ -84,7 +93,8 @@ public class Chunk {
 			}
 
 			if (r.nextInt(100) <= windyness) {
-				sY += roll[r.nextInt(4)];
+				changeY1 = roll[r.nextInt(4)]; 
+				sY += changeY1;
 				if (sY < 3)
 					sY = 3;
 
@@ -101,15 +111,46 @@ public class Chunk {
 				}
 				bb[sX + i][sY + j] = new EmptyBlock();
 			}
+			
+			
+			
+			/*lastY1 = lastY1 - sY + changeY2;
+			for(int z = 0; z < lastY1; z++){//if(lastY1 > 0)
+				((Block) bb[sX + i][sY + currentWidth + z]).addBox(); // add top
+			}
+			if(lastY1 == 0)
+				((Block) bb[sX + i][sY + currentWidth]).addBox(); // add top
+			//for(int z = 0; z > lastY1; z--){
+//				((Block) bb[sX + i-1][sY + currentWidth - z] ).addBox(); // add top
+			//}
+			lastY1 = sY ;
+			*/
+			
+			/*
+			for(int z = 0; z < changeY1+changeY2; z++){
+				((Block) bb[sX + i][sY + currentWidth + z]).addBox(); // add top
+				((Block) bb[sX + i][sY - z-1]).addBox(); // add bottom?
+			}
+			if( 0 == changeY1+changeY2){
+				((Block) bb[sX + i][sY + currentWidth]).addBox(); // add top
+				((Block) bb[sX + i][sY - 1]).addBox(); // add bottom?
+			}
+			for(int z = 0; z > changeY1+changeY2; z--){
+				((Block) bb[sX + i][sY + currentWidth - z]).addBox(); // add top
+				((Block) bb[sX + i][sY + z - 1]).addBox(); // add bottom?
+			}*/
+			
+			
 			((Block) bb[sX + i][sY + currentWidth + 0]).addBox(); // add top
 			((Block) bb[sX + i][sY + currentWidth + 1]).addBox(); // add top
 			((Block) bb[sX + i][sY + currentWidth + 2]).addBox(); // add top
+			
 			((Block) bb[sX + i][sY - 1]).addBox(); // add bottom?
 			((Block) bb[sX + i][sY - 2]).addBox(); // add bottom?
 			((Block) bb[sX + i][sY - 3]).addBox(); // add bottom?
 
-			if (r.nextInt(100) < 5) {
-				coins.add(new Coin(game, chunkOffset + (sX + i) * 32, (sY * 32) + (currentWidth * 16)));
+			if (r.nextInt(100) < 8) {
+				coins.add(new Coin(this, game, chunkOffset + (sX + i) * 32, (sY * 32) + (currentWidth * 16)));
 			}
 		}
 
@@ -142,7 +183,7 @@ public class Chunk {
 		removingCoins.clear();
 
 	}
-
+	
 	public void reset() {
 		removingCoins.clear();
 		coins.clear();

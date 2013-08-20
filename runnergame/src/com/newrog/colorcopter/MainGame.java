@@ -105,7 +105,7 @@ public class MainGame implements Screen {
 	
 	//Chunk chunk;
 	//Chunk chunk2;
-
+	public Array<Particle> sparks;
 	// int StartX = 8;
 	// int StartY = 20;
 
@@ -136,6 +136,9 @@ public class MainGame implements Screen {
 	final String FRAG = "#ifdef GL_ES\n" + "#define LOWP lowp\n" + "precision mediump float;\n" + "#else\n" + "#define LOWP \n" + "#endif\n" + "varying LOWP vec4 vColor;\n" + "varying vec2 vTexCoord;\n" + "\n" + "uniform sampler2D u_texture;\n" + "uniform float resolution;\n" + "uniform float radius;\n" + "uniform vec2 dir;\n" + "\n" + "void main() {\n" + "	vec4 sum = vec4(0.0);\n" + "	vec2 tc = vTexCoord;\n" + "	float blur = radius/resolution; \n" + "    \n" + "    float hstep = dir.x;\n" + "    float vstep = dir.y;\n" + "    \n" + "	sum += texture2D(u_texture, vec2(tc.x - 4.0*blur*hstep, tc.y - 4.0*blur*vstep)) * 0.05;\n" + "	sum += texture2D(u_texture, vec2(tc.x - 3.0*blur*hstep, tc.y - 3.0*blur*vstep)) * 0.09;\n" + "	sum += texture2D(u_texture, vec2(tc.x - 2.0*blur*hstep, tc.y - 2.0*blur*vstep)) * 0.12;\n" + "	sum += texture2D(u_texture, vec2(tc.x - 1.0*blur*hstep, tc.y - 1.0*blur*vstep)) * 0.15;\n" + "	\n" + "	sum += texture2D(u_texture, vec2(tc.x, tc.y)) * 0.16;\n" + "	\n" + "	sum += texture2D(u_texture, vec2(tc.x + 1.0*blur*hstep, tc.y + 1.0*blur*vstep)) * 0.15;\n" + "	sum += texture2D(u_texture, vec2(tc.x + 2.0*blur*hstep, tc.y + 2.0*blur*vstep)) * 0.12;\n" + "	sum += texture2D(u_texture, vec2(tc.x + 3.0*blur*hstep, tc.y + 3.0*blur*vstep)) * 0.09;\n" + "	sum += texture2D(u_texture, vec2(tc.x + 4.0*blur*hstep, tc.y + 4.0*blur*vstep)) * 0.05;\n" + "\n" + "	gl_FragColor = vColor * vec4(sum.rgb, 1.0);\n" + "}";
 
 	
+	float w, h;
+	private boolean zoomOut = false;
+	private int tick;;
 
 	public MainGame(ColorCopterGame g) {
 	
@@ -161,8 +164,8 @@ public class MainGame implements Screen {
 		fboRegion.flip(false, true);
 
 		game = g;
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
+		w = Gdx.graphics.getWidth();
+		h = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera(w, h);
 		bgScroll = new BackgroundScroller(this);
 		partEffects.load(Gdx.files.internal("data/coinBurst"), Gdx.files.internal("effects"));
@@ -174,7 +177,7 @@ public class MainGame implements Screen {
 		//chunks.add(new Chunk(this,chunkCounter++));
 		//chunks.add(new Chunk(this,chunkCounter++));
 		
-		
+		sparks = new Array<Particle>();
 		
 		GUIBuilder();
 
@@ -196,12 +199,18 @@ public class MainGame implements Screen {
 	 * blockBG2_swap[i][j] = false; //} } } }
 	 */
 	
+	
 	public void logic(float delta) {
 
 		if (Gdx.input.isKeyPressed(Keys.M) || Gdx.input.isButtonPressed(Buttons.RIGHT)) {
 			game.setScreen(game.menuscreen);
 		}
 
+		if (Gdx.input.isKeyPressed(Keys.Q)) {
+			player.kill();
+		}
+		
+		
 		player.update(delta);
 		
 		distanceScore = (int) player.position.x/10;
@@ -214,8 +223,9 @@ public class MainGame implements Screen {
 			List<Contact> contacts = world.getContactList();
 			for (Contact c : contacts) {
 				if (c.isTouching())
+					if (player.isAlive()) {
+						
 					for (Entity e : blockList) {
-
 						if (e.type == 3) {
 							Block b = (Block) e;
 
@@ -223,14 +233,17 @@ public class MainGame implements Screen {
 								b.sprite.setTexture(Art.texture2);
 								if (player.timeHit <= 0) {
 									// hitCounter++;
-									gameOverLabel.setText("You Hit the Wall and died!");
+									gameOverLabel.setText("You Hit the Wall and Died! :(");
+									
+								
 									player.kill();
 									resetButton.setVisible(true);
+									
 								}
 							}
 						}
 					}
-				if (player.isAlive()) {
+				
 					
 					for(Chunk chunky: chunkList){
 						Array<Coin> coins = chunky.getCoins();
@@ -239,11 +252,12 @@ public class MainGame implements Screen {
 								Coin co = (Coin) e;
 								if (c.getFixtureB().getBody().equals(co.groundBody) || c.getFixtureA().getBody().equals(co.groundBody)) {
 
-									MyAudio.coinSound.play();
+									
 									partEffects.setPosition(co.position.x, co.position.y);
 									partEffects.start();
 									chunky.addCoinToBeRemoved(co);
 									score++;
+									MyAudio.coinSound.play();
 									coinScoreLabel.setText("  " + score);
 								}
 							}
@@ -258,9 +272,22 @@ public class MainGame implements Screen {
 	
 		if(!player.isAlive() && !player.isRemoved()) {
 			player.removed();
+			for(int pi = 0; pi < 200; pi++){
+				sparks.add(new Particle(this, player.body.getPosition().x+.3f-r.nextFloat()*.75f, player.body.getPosition().y-.1f+r.nextFloat()*.75f, r.nextFloat()*360));
+			}
 			world.destroyBody(player.body);
+			//camera.setToOrtho(false, camera.viewportWidth, viewportHeight);
+			zoomOut  = true;
 		}
-		
+		if(zoomOut){
+			
+			w+=2;
+			h+=2;
+			
+			if(w > Gdx.graphics.getWidth()*1.2f){
+				zoomOut = false;
+			}
+		}
 
 		// if (ticks % 60 == 0) {
 		fpsWorld.setText("FPS: " + Gdx.graphics.getFramesPerSecond() + "      WorldObjects: " + world.getBodyCount() + "  x: "+player.position.x + " cs " + chunkList.size());
@@ -272,6 +299,9 @@ public class MainGame implements Screen {
 			chunkList.add(new Chunk(this, chunkCounter++));
 			chunkList.get(chunkList.size()-1).reset();
 		}
+		for(Particle spa: sparks){
+			spa.update(delta);
+		}
 		
 		
 		for(Chunk chunky: chunkList){
@@ -282,7 +312,7 @@ public class MainGame implements Screen {
 			//chunkList.remove(0);
 		}
 		
-
+		tick++;
 	}
 
 	public void draw(SpriteBatch batch, float parentAlpha) {
@@ -299,7 +329,7 @@ public class MainGame implements Screen {
 		logic(delta);
 
 		float lerp = .3f;
-		camera.position.x += Math.round((player.sprite.getX() - camera.position.x) * lerp);
+		camera.position.x += Math.round((player.sprite.getX()+200 - camera.position.x) * lerp);
 		camera.position.y += Math.round((player.sprite.getY() - camera.position.y) * lerp);
 
 		camera.position.y = MathUtils.clamp(camera.position.y, 340, 1568);
@@ -344,7 +374,7 @@ public class MainGame implements Screen {
 		// finish rendering target B
 		blurTargetB.end();
 		// update our projection matrix with the screen size
-		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.setToOrtho(false, w, h);
 
 		batch.setProjectionMatrix(camera.combined);
 
@@ -371,7 +401,9 @@ public class MainGame implements Screen {
 
 		partEffects.draw(batch);
 
-	
+		for(Particle spa: sparks){
+			spa.render(batch);
+		}
 
 		player.render(batch);
 
@@ -386,8 +418,8 @@ public class MainGame implements Screen {
 
 		batch.end();
 
-		 Matrix4 debugCam = camera.combined.cpy();
-		 debugRenderer.render(world, debugCam.scl(BOX_TO_WORLD));
+		// Matrix4 debugCam = camera.combined.cpy();
+		 //debugRenderer.render(world, debugCam.scl(BOX_TO_WORLD));
 
 		stage.act();
 		stage.draw();
@@ -460,7 +492,13 @@ public class MainGame implements Screen {
 	}
 
 	protected void resetGame() {
+		w = Gdx.graphics.getWidth();
+		h = Gdx.graphics.getHeight();
+		sparks.clear();
+		zoomOut = false;
 		world = new World(new Vector2(0, -10), true);
+		//Contacter listener = new Contacter(this);
+		//world.setContactListener(listener);
 		hitCounter = 0;
 		//chunk.ticks = 0;
 		score = 0;

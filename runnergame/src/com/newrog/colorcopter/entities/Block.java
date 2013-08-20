@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.newrog.colorcopter.MainGame;
 import com.newrog.colorcopter.resources.Art;
@@ -56,8 +58,12 @@ public class Block extends Entity {
 				PolygonShape groundBox = new PolygonShape();  
 				// (setAsBox takes half-width and half-height as arguments)
 				groundBox.setAsBox(32*MainGame.WORLD_TO_BOX/2, 32*MainGame.WORLD_TO_BOX/2);
+				groundBody.setUserData(this);
 				// Create a fixture from our polygon shape and add it to our ground body  
-				groundBody.createFixture(groundBox, 0.0f); 
+				Fixture f = groundBody.createFixture(groundBox, 0.0f); 
+				Filter filt = new Filter();
+				filt.categoryBits = 0x0001;
+				f.setFilterData(filt);
 				// Clean up after ourselves
 				groundBox.dispose();
 	}
