@@ -6,6 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.equations.Cubic;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Buttons;
@@ -16,6 +23,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -42,6 +50,8 @@ import com.newrog.colorcopter.entities.Block;
 import com.newrog.colorcopter.entities.Coin;
 import com.newrog.colorcopter.entities.EmptyBlock;
 import com.newrog.colorcopter.entities.Entity;
+import com.newrog.colorcopter.entities.EntityAccessor;
+import com.newrog.colorcopter.entities.Junk;
 import com.newrog.colorcopter.entities.Player;
 import com.newrog.colorcopter.resources.Art;
 import com.newrog.colorcopter.resources.MyAudio;
@@ -69,6 +79,7 @@ public class MainGame implements Screen {
 
 	public World world;
 	public OrthographicCamera camera;
+	public OrthographicCamera cameraGUI;
 	public ColorCopterGame game;
 	public Player player;
 
@@ -87,6 +98,10 @@ public class MainGame implements Screen {
 
 	int hitCounter = 0;
 
+	
+	int bestScore = 0;
+	int bestDistance = 0;
+	
 	// private int offy = 50;
 	// private int bgx = 0;
 	// private int bgx2 = 640;
@@ -138,7 +153,9 @@ public class MainGame implements Screen {
 	
 	float w, h;
 	private boolean zoomOut = false;
-	private int tick;;
+	private int tick;
+	private Junk junkyBlack;
+	private TweenManager tm;;
 
 	public MainGame(ColorCopterGame g) {
 	
@@ -163,13 +180,29 @@ public class MainGame implements Screen {
 		fboRegion = new TextureRegion(blurTargetA.getColorBufferTexture());
 		fboRegion.flip(false, true);
 
+		
+		tm = new TweenManager();
+		
 		game = g;
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera(w, h);
+		cameraGUI =new OrthographicCamera(w, h);
+		cameraGUI.translate(w/2, h/2);
+		cameraGUI.update();
 		bgScroll = new BackgroundScroller(this);
 		partEffects.load(Gdx.files.internal("data/coinBurst"), Gdx.files.internal("effects"));
 
+		junkyBlack = new Junk();
+		junkyBlack.sprite = new Sprite(Art.blackBackground);
+		junkyBlack.sprite.setOrigin(0, 0);
+		
+		junkyBlack.sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		junkyBlack.position.x=0;
+		junkyBlack.position.y=0;
+		
+		Tween.registerAccessor(Entity.class, new EntityAccessor());
+		
 		chunkCounter = 0;
 		//chunks = new Array<Chunk>();
 		chunkList = new LinkedList<Chunk>();
@@ -181,8 +214,27 @@ public class MainGame implements Screen {
 		
 		GUIBuilder();
 
-		resetGame();
+		
+		
+		/*callbackStart = new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				
+			}
+		};*/
+		resetCallback = new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				//System.out.println("beep");
+				transitionUpScreen();
+				//Timeline.createSequence().beginSequence().delay(1).setCallback(callbackStart).start();
+				
+			}
+		};
+
+
 	}
+	//private TweenCallback callbackStart;
 
 	/*
 	 * private void generateLevel(int off) { double factor = 10; for(int i = 0;
@@ -202,20 +254,27 @@ public class MainGame implements Screen {
 	
 	public void logic(float delta) {
 
+		
+	
+		
 		if (Gdx.input.isKeyPressed(Keys.M) || Gdx.input.isButtonPressed(Buttons.RIGHT)) {
 			game.setScreen(game.menuscreen);
 		}
 
-		if (Gdx.input.isKeyPressed(Keys.Q)) {
-			player.kill();
-		}
+		//if (Gdx.input.isKeyPressed(Keys.Q)) {
+		//	player.kill();
+		//}
 		
 		
 		player.update(delta);
 		
 		distanceScore = (int) player.position.x/10;
+		if(distanceScore > bestDistance)
+			bestDistance = distanceScore;
+		
+		
 		if(distanceScore>15){
-			distanceScoreLabel.setText("" + distanceScore + "  ");
+			distanceScoreLabel.setText("Dist:" + distanceScore + " ~ Best: " + bestDistance + "  " );
 		}
 		
 		if (world.getContactCount() > 0) {
@@ -224,26 +283,44 @@ public class MainGame implements Screen {
 			for (Contact c : contacts) {
 				if (c.isTouching())
 					if (player.isAlive()) {
-						
-					for (Entity e : blockList) {
-						if (e.type == 3) {
-							Block b = (Block) e;
 
-							if (c.getFixtureB().getBody().equals(b.groundBody) || c.getFixtureA().getBody().equals(b.groundBody)) {
-								b.sprite.setTexture(Art.texture2);
-								if (player.timeHit <= 0) {
-									// hitCounter++;
-									gameOverLabel.setText("You Hit the Wall and Died! :(");
-									
-								
-									player.kill();
-									resetButton.setVisible(true);
-									
+						
+						 Entity be = (Entity) c.getFixtureA().getBody().getUserData();
+						 if(be.type == 3){
+							 Block bl = (Block) c.getFixtureA().getBody().getUserData();
+								if(bl != null){
+									bl.sprite.setTexture(Art.texture2);
+									if (player.timeHit <= 0) {
+										// hitCounter++;
+										gameOverLabel.setText("You Hit the Wall and Died! :(");
+
+										player.kill();
+										resetButton.setVisible(true);
+									}
+								}
+	 
+						 }
+						 						
+						/*for (Entity e : blockList) {
+							if (e.type == 3) {
+								Block b = (Block) e;
+
+								if ((c.getFixtureB().getBody().equals(b.groundBody) && c.getFixtureA().getBody().equals(player.body))
+										|| (c.getFixtureA().getBody().equals(b.groundBody)) && c.getFixtureB().getBody().equals(player.body)) {
+									b.sprite.setTexture(Art.texture2);
+									if (player.timeHit <= 0) {
+										// hitCounter++;
+										gameOverLabel.setText("You Hit the Wall and Died! :(");
+
+										player.kill();
+										resetButton.setVisible(true);
+
+									}
 								}
 							}
-						}
-					}
-				
+						}*/
+						
+						
 					
 					for(Chunk chunky: chunkList){
 						Array<Coin> coins = chunky.getCoins();
@@ -257,8 +334,10 @@ public class MainGame implements Screen {
 									partEffects.start();
 									chunky.addCoinToBeRemoved(co);
 									score++;
+									if(score > bestScore)
+										bestScore = score;
 									MyAudio.coinSound.play();
-									coinScoreLabel.setText("  " + score);
+									coinScoreLabel.setText("  Score: " + score  + " ~ Best: " + bestScore);
 								}
 							}
 						}
@@ -278,14 +357,17 @@ public class MainGame implements Screen {
 			world.destroyBody(player.body);
 			//camera.setToOrtho(false, camera.viewportWidth, viewportHeight);
 			zoomOut  = true;
+
+			MyAudio.helicopterProp.stop();
 		}
 		if(zoomOut){
 			
 			w+=2;
 			h+=2;
 			
-			if(w > Gdx.graphics.getWidth()*1.2f){
+			if(w > Gdx.graphics.getWidth()*1.1f){
 				zoomOut = false;
+				
 			}
 		}
 
@@ -311,6 +393,10 @@ public class MainGame implements Screen {
 			chunkList.pop().cleanUp();
 			//chunkList.remove(0);
 		}
+		tm.update(delta);
+		
+		
+		junkyBlack.update(delta);
 		
 		tick++;
 	}
@@ -319,12 +405,25 @@ public class MainGame implements Screen {
 		partEffects.draw(batch);
 	}
 
-	 private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-	public Vector3 tmpCam;
+	private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+	public Vector3 tmpCam = new Vector3(0,0,0);
+	private TweenCallback resetCallback;
 
-
+	float timeToReset = 1;
 	@Override
 	public void render(float delta) {
+		if(resetting)
+		{
+			//System.out.println(timeToReset);
+			timeToReset -= delta;
+			
+			if(timeToReset < 0){
+				resetting = false;
+				resetGame();
+				timeToReset = 1;
+			}
+		}
+		
 		
 		logic(delta);
 
@@ -359,7 +458,7 @@ public class MainGame implements Screen {
 		batch.flush();
 		blurTargetA.end();
 		batch.setShader(blurShader);
-		blurShader.setUniformf("dir", 1.5f, 0f);
+		blurShader.setUniformf("dir", 2f, 0f);
 		blurTargetB.begin();
 
 		// we want to render FBO target A into target B
@@ -379,7 +478,7 @@ public class MainGame implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 
 		// update the blur only along Y-axis
-		blurShader.setUniformf("dir", 0f, 1.5f);
+		blurShader.setUniformf("dir", 0f, 2f);
 		fboRegion.setTexture(blurTargetB.getColorBufferTexture());
 		batch.draw(fboRegion, 0, 0);
 
@@ -418,12 +517,17 @@ public class MainGame implements Screen {
 
 		batch.end();
 
-		// Matrix4 debugCam = camera.combined.cpy();
+		 //Matrix4 debugCam = camera.combined.cpy();
 		 //debugRenderer.render(world, debugCam.scl(BOX_TO_WORLD));
 
 		stage.act();
 		stage.draw();
-
+		
+		batch.setProjectionMatrix(cameraGUI.combined);
+		batch.begin();
+		junkyBlack.render(batch);
+		batch.end();
+		
 		world.step(1 / 60f, 6, 2);
 	}
 
@@ -437,7 +541,7 @@ public class MainGame implements Screen {
 		coinScoreLabel.setAlignment(Align.left);
 
 		// l.setColor(Color.GREEN);
-		coinScoreLabel.setFontScale(4);
+		coinScoreLabel.setFontScale(3);
 		stage.addActor(coinScoreLabel);
 		
 		distanceScoreLabel = new Label("Distance  ", ls);
@@ -446,7 +550,7 @@ public class MainGame implements Screen {
 		distanceScoreLabel.setAlignment(Align.right);
 
 		// l.setColor(Color.GREEN);
-		distanceScoreLabel.setFontScale(4);
+		distanceScoreLabel.setFontScale(3);
 		stage.addActor(distanceScoreLabel);
 		
 		
@@ -477,9 +581,13 @@ public class MainGame implements Screen {
 		// resetButton.scale(5f);
 
 		resetButton.addListener(new ClickListener() {
+			
+
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				resetGame();
+				
+				transitionDownScreen();
+				resetting = true;
 			}
 
 		});
@@ -490,8 +598,9 @@ public class MainGame implements Screen {
 		stage.addActor(resetButton);
 		Gdx.input.setInputProcessor(stage);
 	}
-
-	protected void resetGame() {
+private boolean resetting = false;
+	public void resetGame() {
+		
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 		sparks.clear();
@@ -500,24 +609,47 @@ public class MainGame implements Screen {
 		//Contacter listener = new Contacter(this);
 		//world.setContactListener(listener);
 		hitCounter = 0;
+		
 		//chunk.ticks = 0;
 		score = 0;
 		gameOverLabel.setText("");
-		MyAudio.helicopterProp.stop();
+		
+		
+		
 		resetButton.setVisible(false);
 		batch = new SpriteBatch();
 		player = new Player(this);
-
+		
+		chunkList.clear();
+		chunkCounter = 0;
+		Chunk.chunkDiff = 0;
+		Chunk.currentWidth = 25;
+		chunkList.add(new Chunk(this,chunkCounter++));
 		for(Chunk chunky: chunkList){
 			chunky.reset();
+			
 		}
-		
-		
+		//
+		coinScoreLabel.setText("  Score: " + score  + " ~ Best: " + bestScore);
+		distanceScoreLabel.setText("Distance  ");
+		MyAudio.helicopterProp.loop();
+		transitionUpScreen();
 		player.body.setTransform(2, 20 * 32 * WORLD_TO_BOX, 0);
+		camera = new OrthographicCamera(w, h);
+		tmpCam = camera.position.cpy();
+		//System.out.println(tmpCam.x);
 		bgScroll.init();
-
+		
 	}
-
+	protected void transitionDownScreen() {
+		Tween.to(junkyBlack, EntityAccessor.POSITION_XY, 1.0f).target(0,0).ease(Cubic.INOUT).setCallback(resetCallback).start(tm);
+	}
+	
+	protected void transitionUpScreen() {
+		Tween.to(junkyBlack, EntityAccessor.POSITION_XY, 1.0f).target(0,Gdx.graphics.getHeight()).ease(Cubic.INOUT).start(tm);
+	}
+	
+	
 	@Override
 	public void resize(int width, int height) {
 
@@ -525,7 +657,7 @@ public class MainGame implements Screen {
 
 	@Override
 	public void show() {
-
+		resetGame();
 	}
 
 	@Override

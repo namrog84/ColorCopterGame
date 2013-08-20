@@ -22,16 +22,16 @@ public class Chunk {
 	private int roughness = 35;
 	private int windyness = 50;
 	private int[] roll = { -2, -1, 1, 2 };
-	private static int currentWidth = 25;
+	public static int currentWidth = 25;
 	private float offR;
 	private float offG;
 	private float offB;
 
-	int chunkPosition = 0;
+	public int chunkPosition = 0;
 	int chunkOffset = 0;
 	public static int lastChunkY;
 	public Array<Coin> coins = new Array<Coin>();
-	private static int chunkDiff = 0;
+	static int chunkDiff = 0;
 
 	public Chunk(MainGame game, int cp) {
 		this.game = game;
@@ -42,29 +42,33 @@ public class Chunk {
 		chunkPosition = cp;
 
 		chunkOffset = chunkPosition * chunkWidth * 32;
-		if (chunkPosition % 2 == 0 && chunkDiff < 8) {
+		if ( chunkDiff < 8) { //chunkPosition % 2 == 0 &&
 			chunkDiff++;
 		}
-		System.out.println("diff: " + chunkDiff);
+		//System.out.println("diff: " + chunkDiff);
 	}
 
 	public void render(SpriteBatch batch) {
 
-		float Rfluc = (float) (Math.cos((ticks * offR) / 100f) * .1f);
-		float Gfluc = (float) (Math.cos((ticks * offG) / 100f) * .1f);
-		float Bfluc = (float) (Math.cos((ticks * offB) / 100f) * .1f);
+		//float Rfluc = (float) (Math.cos((ticks * offR) / 100f) * .1f);
+		//float Gfluc = (float) (Math.cos((ticks * offG) / 100f) * .1f);
+		//float Bfluc = (float) (Math.cos((ticks * offB) / 100f) * .1f);
 
-		batch.setColor(.9f + Rfluc, .9f + Gfluc, .9f + Bfluc, 1f);
+		//batch.setColor(.9f + Rfluc, .9f + Gfluc, .9f + Bfluc, 1f);
+		
 		for (int i = 0; i < chunkWidth; i++) {
 			for (int j = 0; j < chunkHeight; j++) {
 
 				blocks[i][j].render(batch);
 			}
 		}
-		batch.setColor(Color.WHITE);
-
-		for (Coin c : coins) {
-			c.render(batch);
+		//batch.setColor(Color.WHITE);
+		
+		if (coins.size > 0) {
+			for (Coin c : coins) {
+				// if(c!=null)
+				c.render(batch);
+			}
 		}
 	}
 	int changeY1= 0;
@@ -179,12 +183,12 @@ public class Chunk {
 		for (Coin rc : removingCoins) {
 			game.world.destroyBody(rc.groundBody);
 		}
-
 		removingCoins.clear();
 
 	}
 	
 	public void reset() {
+		//chunkDiff = 0;
 		removingCoins.clear();
 		coins.clear();
 		if (chunkPosition == 0) {

@@ -19,28 +19,28 @@ public class Contacter implements ContactListener{
 	public void beginContact(Contact contact) {
 		
 		
-		Entity eA = ((Entity)(contact.getFixtureA().getBody().getUserData()));
-		Entity eB = ((Entity)(contact.getFixtureB().getBody().getUserData()));
-		checkEntity(eA);
-		checkEntity(eB);
+		//Entity eA = ((Entity)(contact.getFixtureA().getBody().getUserData()));
+		//Entity eB = ((Entity)(contact.getFixtureB().getBody().getUserData()));
+		//checkEntity(eA);
+		//checkEntity(eB);
 	}
 
-	private void checkEntity(Entity e) {
-		if(e != null){
-			System.out.println(e + "  " + e.type);
+	//private void checkEntity(Entity e) {
+		//if(e != null){
+	//		System.out.println(e + "  " + e.type);
 			//System.out.println(e.type);
-			if(e.type == 5 ){
+		//	if(e.type == 5 ){
 				
-				Coin c = (Coin)e;
+			//	Coin c = (Coin)e;
 			/*	if(c.hit = false){
 					c.coinChunk.addCoinToBeRemoved(c);
 					g.partEffects.setPosition(c.position.x, c.position.y);
 					g.partEffects.start();
 					c.hit = true;
 				}*/
-			}
-		}
-	}
+		//	}
+		//}
+	//}
 
 	@Override
 	public void endContact(Contact contact) {

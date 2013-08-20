@@ -1,10 +1,10 @@
 #Fat Jar Configuration File
-#Mon Aug 19 19:36:43 EDT 2013
+#Tue Aug 20 01:56:45 EDT 2013
 onejar.license.required=false
 manifest.classpath=
 manifest.removesigners=false
 onejar.checkbox=false
-jarname=runnergame-desktop_fat2.jar
+jarname=runnergame-desktop_fat4.jar
 manifest.mergeall=true
 manifest.mainclass=com.newrog.runnergame.Main
 manifest.file=<createnew>

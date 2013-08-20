@@ -24,6 +24,24 @@ public class BackgroundScroller {
 		
 	}
 	
+	
+
+	public void init() {
+		countt = 1;
+		distSinceLast = 0;
+		distanc = 0;
+		chunkCount1 = 0;
+		chunkCount2 = 1;
+		
+		
+		
+		
+		
+		generateBackground(chunkCount1);
+		generateBackground2(chunkCount2);
+	}
+	
+	
 	double fillRate = .3;
 
 	public void generateBackground(int off) {
@@ -90,9 +108,5 @@ public class BackgroundScroller {
 	}
 
 
-	public void init() {
-		generateBackground(chunkCount1);
-		generateBackground2(chunkCount2);
-	}
 	
 }

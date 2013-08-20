@@ -74,7 +74,7 @@ public class Player extends Entity {
 		// BodyDef and FixtureDef don't need disposing, but shapes do.
 		circle.dispose();
 
-		MyAudio.helicopterProp.loop();
+		
 
 	}
 
@@ -165,10 +165,10 @@ public class Player extends Entity {
 		// if(body.getLocalCenter())
 		// System.out.println(body.getPosition().x);
 
-		if (position.x > 16000) {
-			game.gameOverLabel.setText("YOU WIN!");
+		//if (position.x > 16000) {
+			//game.gameOverLabel.setText("YOU WIN!");
 			// gameFinished = true;
-		}
+		//}
 
 		stateTime += Gdx.graphics.getDeltaTime();
 	}

@@ -23,6 +23,8 @@ public class Art {
 	
 	public static Texture texture2;
 	public static Texture startTexture;
+	public static Texture gamingTexture;
+	
 	public static Texture coinT;
 	public static Texture coinPlain;
 	public static Animation coinAnimation;
@@ -63,6 +65,10 @@ public class Art {
 		
 		blackBackground = new Texture(Gdx.files.internal("data/blackBG.png"));
 		blackBackground.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		gamingTexture = new Texture(Gdx.files.internal("data/gaming_3xpixel.png"));
+		gamingTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+
 		
 		
 		startTexture = new Texture(Gdx.files.internal("data/block1.png"));

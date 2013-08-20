@@ -18,7 +18,7 @@ public class ColorCopterGame extends Game{
 		gamescreen = new MainGame(this);
 		menuscreen = new MenuScreen(this);
 		
-		setScreen(gamescreen);
+		setScreen(menuscreen);
 		
 		
 	}

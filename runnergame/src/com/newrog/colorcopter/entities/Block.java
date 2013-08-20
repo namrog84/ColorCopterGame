@@ -41,6 +41,8 @@ public class Block extends Entity {
 		
 		
 		g.blockList.add(this);
+		
+		
 		addedBox = false;
 	}
 	public boolean addedBox;
